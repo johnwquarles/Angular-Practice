@@ -12,18 +12,6 @@ html(lang="en-US" ng-app="angularPractice")
     .container
       .header
         h1 Angular Practice
-      .form-section
-        form.form-inline(name="newThingForm" ng-submit="newThingForm.$valid && main.addNewThing()" novalidate)
-          .form-group
-            label Name
-            input.form-control(type="text", placeholder="object" ng-model="main.newThing.name" required)
-          .form-group
-            label Twitter
-            input.form-control(type="text", placeholder="TWEETUR" ng-model="main.newThing.twitter" required)
-          .form-group
-            label Photo
-            input.form-control(type="text", placeholder="url" ng-model="main.newThing.photo")
-          input.btn(type="submit" ng-disabled="newThingForm.$invalid")
       .table-section
         table(class="table")
           tr
@@ -32,13 +20,48 @@ html(lang="en-US" ng-app="angularPractice")
             th Twitter
             th Photo
           tr(ng-repeat="thing in main.things | orderBy:'name' | filter:query")
-            td: button.btn(ng-click="main.removeThing(thing)") Remove
+            td: button.btn.btn-xs.btn-danger(ng-click="main.removeThing(thing)") X
             td {{thing.name}}
             td: a(href="http://twitter.com/{{thing.twitter}}", target="_blank") {{thing.twitter}}
-            td: img(src="{{thing.photo}}")
-      form
-        .form-group
-          label Filter
-          input(type="text", placeholder="filter" ng-model="query")
+            td: img(ng-src="{{thing.photo}}", data-toggle="modal", data-target="#lightbox", ng-click="main.showLightbox(thing)")
+          tr
+            td: button.btn.btn-success.btn-block(data-toggle="modal", data-target="#modal") Add New Thing
+            td(colspan="2")
+              input.form-control(type="text", ng-model="query", placeholder="Filter Results")
+
+      .modal.fade#modal
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(data-dismiss="modal")
+                span &times;
+              h1 Add Thing
+            .modal-body
+              .form-section
+                // ng-submit left in below intentionally as an example of using a truthy & && statement to check for a condition prior to firing a function.
+
+                form(name="newThingForm" ng-submit="newThingForm.$valid && main.addNewThing()" novalidate)
+                  .form-group(ng-class="{'has-success': newThingForm.n.$dirty, 'has-error': newThingForm.n.$dirty && !main.newThing.name}")
+                    label Name
+                    input.form-control(name="n", type="text", placeholder="object" ng-model="main.newThing.name" required)
+                  .form-group(ng-class="{'has-success': newThingForm.t.$dirty && main.newThing.twitter.length > 1 && main.newThing.twitter[0] === '@', 'has-error': newThingForm.t.$dirty && (main.newThing.twitter.length <= 1 || main.newThing.twitter[0] !== '@')}")
+                    label Twitter
+                    input.form-control(name="t", type="text", placeholder="TWEETUR" ng-model="main.newThing.twitter" required)
+                  .form-group(ng-class="{'has-success': newThingForm.p.$dirty && main.newThing.photo.slice(0, 7) === 'http://', 'has-error': newThingForm.p.$dirty && main.newThing.photo.slice(0, 7) !== 'http://'}")
+                    label Photo
+                    input.form-control(name="p", type="text", placeholder="url" ng-model="main.newThing.photo")
+            .modal-footer
+              button.btn.btn-lg.btn-success(ng-click="main.addNewThing()" ng-disabled="newThingForm.$invalid") Add New Thing
+              button.btn.btn-lg.btn-danger(data-dismiss="modal") Cancel
+
+      .modal.fade#lightbox
+        .modal-dialog.modal-lg
+          .modal-content
+            .modal-header
+              button.close(data-dismiss="modal")
+                span &times;
+              img
+
+
     script(src="lib/build.js")
     script(src="js/main.js")

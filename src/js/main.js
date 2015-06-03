@@ -14,9 +14,16 @@ app.controller('Main', function() {
 	vm.addNewThing = function(){
 		vm.things.push(vm.newThing);
 		vm.newThing = {};
+    $("#modal").modal('hide');
 	};
 
 	vm.removeThing = function(thing) {
     vm.things.splice(vm.things.indexOf(thing), 1);
 	};
+
+  vm.showLightbox = function(thing) {
+    var img = $("<img>");
+    img.attr('src', thing.photo);
+    $("#lightbox .modal-header img").replaceWith(img);
+  };
 })
