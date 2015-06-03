@@ -1,0 +1,27 @@
+html body {
+
+	.header {
+		text-align: center;
+		font-family: 'Sigmar One', cursive;
+
+		h1 {
+			display: inline-block;
+			font-size: 50px;
+			margin: 25px 15px;
+		}
+	}
+  
+  .form-section {
+
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+	.table-section {
+
+		img {
+      width: 100px;
+      height: 100px;
+		}
+	}
+}
