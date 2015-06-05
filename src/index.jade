@@ -19,9 +19,23 @@ html(lang="en-US" ng-app="angularPractice")
             th Name
             th Twitter
             th Photo
-          tr(ng-repeat="thing in main.things | orderBy:'name' | filter:query")
+          // below: syntax for looping over an object; just say "thing" to loop over an array.
+          // as written this is still looping over an array. It gives each (id, thing) from main.things
+          // to objToArr, which is made into an array element. It loops over these.
+
+          // Need to use ng-repeat over an array in order for filter:query to work. orderBy:'name' won't work with an object
+          // either but it won't throw an error.
+
+          // starts w/firebase structure: { id: {thing obj}, id: {thing obj}, etc.}
+          // converts the firebase structure to an array full of objects with _id added (which was the key "id" from before):
+          // [{thing obj}, {thing obj}, etc.]
+
+          // I think that (id, thing) in main.things must get those two properties in memory (& available to you),
+          // and then objToArr manipulates (filters) main.things, which the rest of the filters then work from.
+
+          tr(ng-repeat="(id, thing) in main.things | objToArr | orderBy:'name' | filter:query")
             td: button.btn.btn-xs.btn-danger(ng-click="main.removeThing(thing)") X
-            td {{thing.name}}
+            td {{thing.name | ransomcase}}
             td: a(href="http://twitter.com/{{thing.twitter}}", target="_blank") {{thing.twitter}}
             td: img(ng-src="{{thing.photo}}", data-toggle="modal", data-target="#lightbox", ng-click="main.showLightbox(thing)")
           tr
@@ -40,18 +54,18 @@ html(lang="en-US" ng-app="angularPractice")
               .form-section
                 // ng-submit left in below intentionally as an example of using a truthy & && statement to check for a condition prior to firing a function.
 
-                form(name="newThingForm" ng-submit="newThingForm.$valid && main.addNewThing()" novalidate)
-                  .form-group(ng-class="{'has-success': newThingForm.n.$dirty, 'has-error': newThingForm.n.$dirty && !main.newThing.name}")
+                form(name="main.newThingForm" ng-submit="main.newThingForm.$valid && main.addNewThing()" novalidate)
+                  .form-group(ng-class="{'has-success': main.newThingForm.n.$dirty, 'has-error': main.newThingForm.n.$dirty && !main.newThing.name}")
                     label Name
                     input.form-control(name="n", type="text", placeholder="object" ng-model="main.newThing.name" required)
-                  .form-group(ng-class="{'has-success': newThingForm.t.$dirty && main.newThing.twitter.length > 1 && main.newThing.twitter[0] === '@', 'has-error': newThingForm.t.$dirty && (main.newThing.twitter.length <= 1 || main.newThing.twitter[0] !== '@')}")
+                  .form-group(ng-class="{'has-success': main.newThingForm.t.$dirty && main.newThing.twitter.length > 1 && main.newThing.twitter[0] === '@', 'has-error': main.newThingForm.t.$dirty && (main.newThing.twitter.length <= 1 || main.newThing.twitter[0] !== '@')}")
                     label Twitter
                     input.form-control(name="t", type="text", placeholder="TWEETUR" ng-model="main.newThing.twitter" required)
-                  .form-group(ng-class="{'has-success': newThingForm.p.$dirty && main.newThing.photo.slice(0, 7) === 'http://', 'has-error': newThingForm.p.$dirty && main.newThing.photo.slice(0, 7) !== 'http://'}")
+                  .form-group(ng-class="{'has-success': main.newThingForm.p.$dirty && main.newThing.photo.slice(0, 4) === 'http', 'has-error': main.newThingForm.p.$dirty && main.newThing.photo.slice(0, 4) !== 'http'}")
                     label Photo
                     input.form-control(name="p", type="text", placeholder="url" ng-model="main.newThing.photo")
             .modal-footer
-              button.btn.btn-lg.btn-success(ng-click="main.addNewThing()" ng-disabled="newThingForm.$invalid") Add New Thing
+              button.btn.btn-lg.btn-success(ng-click="main.addNewThing()" ng-disabled="main.newThingForm.$invalid") Add New Thing
               button.btn.btn-lg.btn-danger(data-dismiss="modal") Cancel
 
       .modal.fade#lightbox
