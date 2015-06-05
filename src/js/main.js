@@ -1,6 +1,6 @@
-var app = angular.module("angularPractice", []);
+angular.module("angularPractice", ['ngRoute'])
 
-app.filter('ransomcase', function() {
+.filter('ransomcase', function() {
   return function (string) {
      return string.split('').map(function (char, i) {
        return i % 2 ? char.toUpperCase(): char.toLowerCase();
@@ -9,7 +9,7 @@ app.filter('ransomcase', function() {
 })
 
 // don't want to totally destroy the key; add it as an 'id' property of the objects contained in the resultant array.
-app.filter('objToArr', function() {
+.filter('objToArr', function() {
   return function (obj) {
     if (obj) {
       return Object.keys(obj).map(function(key) {
@@ -22,7 +22,7 @@ app.filter('objToArr', function() {
 })
 
 // pass in $http module as a dependency to the controller below.
-app.controller('Main', function($http) {
+.controller('Main', function($http) {
 	var vm = this;
 
   $http

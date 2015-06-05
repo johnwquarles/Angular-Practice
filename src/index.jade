@@ -33,6 +33,9 @@ html(lang="en-US" ng-app="angularPractice")
           // I think that (id, thing) in main.things must get those two properties in memory (& available to you),
           // and then objToArr manipulates (filters) main.things, which the rest of the filters then work from.
 
+          // TURNS OUT that id will be changed to the index of the array that is made with objToArr. So it won't work,
+          // but thing._id will. Seems weird. Is an Angular thing that is happening.
+
           tr(ng-repeat="(id, thing) in main.things | objToArr | orderBy:'name' | filter:query")
             td: button.btn.btn-xs.btn-danger(ng-click="main.removeThing(thing)") X
             td {{thing.name | ransomcase}}
